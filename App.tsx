@@ -14,7 +14,11 @@ import {
 import { convertContent, getLabels } from './lib/converters';
 import { Button } from './components/Button';
 import { AdBanner } from './components/AdBanner';
+import { Footer } from './components/Footer';
+import { Modal } from './components/Modal';
 import { ConversionType } from './types';
+
+type ModalType = 'about' | 'privacy' | 'contact' | null;
 
 const App: React.FC = () => {
   const [conversionType, setConversionType] = useState<ConversionType>('HTML_TO_MD');
@@ -24,6 +28,7 @@ const App: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [showToast, setShowToast] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string>('');
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   const labels = getLabels(conversionType);
 
@@ -301,6 +306,60 @@ console.log("Convert HTML to MD easily");
       <div className="max-w-7xl mx-auto px-4 mb-8 w-full">
          <AdBanner />
       </div>
+
+      <Footer 
+        onOpenAbout={() => setActiveModal('about')}
+        onOpenPrivacy={() => setActiveModal('privacy')}
+        onOpenContact={() => setActiveModal('contact')}
+      />
+
+      {/* Modals */}
+      <Modal 
+        isOpen={activeModal === 'about'} 
+        onClose={() => setActiveModal(null)} 
+        title="About Us"
+      >
+        <p className="font-semibold text-white">Just trying my hand at making a simple web tool, hope you find it useful.</p>
+        <p>
+          HTML to Markdown Converter was started as an experiment to create a clean, clutter-free utility for developers, writers, and content creators. 
+          Often, moving between CMS editors (like WordPress) and developer tools (like VS Code or GitHub) requires quick formatting shifts.
+        </p>
+        <p>
+          We aimed to build a tool that respects your privacy (running entirely in your browser) while offering smart features like URL cleaning to keep your documents neat.
+        </p>
+      </Modal>
+
+      <Modal 
+        isOpen={activeModal === 'privacy'} 
+        onClose={() => setActiveModal(null)} 
+        title="Privacy Policy"
+      >
+        <h3 className="text-white font-semibold mb-2">Data Processing</h3>
+        <p>
+          We do not store, save, or transmit any of the text or files you process with this tool. 
+          All conversions happen locally on your device using JavaScript. Your data never leaves your browser.
+        </p>
+        
+        <h3 className="text-white font-semibold mt-4 mb-2">Cookies & Advertising</h3>
+        <p>
+          We use Google AdSense to display advertisements. Google and its partners may use cookies to serve ads based on your prior visits to this website or other websites.
+        </p>
+        <p>
+          You can opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">Google's Ad Settings</a>.
+        </p>
+      </Modal>
+
+      <Modal 
+        isOpen={activeModal === 'contact'} 
+        onClose={() => setActiveModal(null)} 
+        title="Contact Us"
+      >
+        <p>Have a question, found a bug, or just want to say hi?</p>
+        <div className="bg-slate-800 p-4 rounded-lg mt-2 inline-flex items-center gap-2">
+            <span className="text-slate-400">Email:</span>
+            <a href="mailto:brown1813n@gmail.com" className="text-blue-400 hover:text-blue-300 font-medium">brown1813n@gmail.com</a>
+        </div>
+      </Modal>
 
       {/* Toast Notification */}
       <div 
