@@ -12,7 +12,7 @@ export const cleanTrackingParams = (url: string): string => {
 
     // 2. Define regex patterns for tracking parameters
     // Common: utm_*, fbclid, gclid, ref, mc_eid, _hsenc, _hsmi, ml_subscriber, etc.
-    const trackingRegex = /^(utm_|fbclid|gclid|gclsrc|dclid|ref|mc_|ad_id|campaign|osis|cvosrc|sc_|yclid|_hs|cto_)/i;
+    const trackingRegex = /^(utm_|fbclid|gclid|gclsrc|dclid|ref|mc_|ad_id|campaign|osis|cvosrc|sc_|yclid|_hs|cto_|aff|id)/i;
 
     // 3. Iterate and delete
     const params = new URLSearchParams(urlObj.search);
@@ -40,7 +40,8 @@ export const cleanTrackingParams = (url: string): string => {
   } catch (e) {
     // If it's not a valid full URL (e.g. relative path), we try a simpler regex replacement on the string directly
     // This handles cases like "/product?utm_source=xyz"
-    return url.replace(/([?&])(utm_[^&=]+|fbclid|gclid|ref)=[^&]*(&|$)/gi, (match, p1, p2, p3) => {
+    // Updated to include coverage for all main regex patterns including aff and id.
+    return url.replace(/([?&])(utm_[^&=]+|fbclid|gclid|gclsrc|dclid|ref|mc_[^&=]+|ad_id|campaign|osis|cvosrc|sc_[^&=]+|yclid|_hs[^&=]+|cto_[^&=]+|aff[^&=]*|id[^&=]*)=[^&]*(&|$)/gi, (match, p1, p2, p3) => {
         if (p1 === '?' && p3 === '&') return '?';
         if (p1 === '?' && !p3) return '';
         return p3 ? p1 : ''; // preserve delimiter if needed
