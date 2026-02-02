@@ -34,6 +34,15 @@ export const convertContent = (
       const { markdown, linksCleaned } = turndownConvert(input, cleanUrls, options);
       return { result: markdown, linksCleaned };
       
+    case 'MD_TO_MD':
+      // 1. Convert source Markdown to HTML using Marked
+      // We don't clean links in this step, we let Turndown handle it in the next step
+      const intermediateHtml = parse(input) as string;
+      
+      // 2. Convert HTML back to Markdown using Turndown with target options
+      const { markdown: reformattedMd, linksCleaned: reformattedLinks } = turndownConvert(intermediateHtml, cleanUrls, options);
+      return { result: reformattedMd, linksCleaned: reformattedLinks };
+
     case 'MD_TO_HTML':
       let sourceMd = input;
       let cleanedCount = 0;
@@ -67,6 +76,7 @@ export const convertContent = (
 export const getLabels = (type: ConversionType) => {
     switch (type) {
         case 'HTML_TO_MD': return { input: 'HTML Input', output: 'Markdown Output' };
+        case 'MD_TO_MD': return { input: 'Markdown Input', output: 'Reformatted Markdown' };
         case 'MD_TO_HTML': return { input: 'Markdown Input', output: 'HTML Output' };
         case 'HTML_TO_TEXT': return { input: 'HTML Input', output: 'Plain Text Output' };
     }
@@ -75,22 +85,24 @@ export const getLabels = (type: ConversionType) => {
 export const getSampleContent = (type: ConversionType): string => {
     switch(type) {
       case 'MD_TO_HTML':
-        return `# HTML to Markdown Converter
+      case 'MD_TO_MD':
+        return `# Markdown Conversion
 
-This is a **Markdown** sample to demonstrate conversion.
+This sample demonstrates how to reformat **Markdown**.
 
-## Features
-- **Bold** and *Italic* text
-- [Link with Params](https://example.com?utm_source=google&utm_medium=cpc&gclid=123)
-- Code blocks:
+## Why Convert MD to MD?
+1. Convert headers to bold (for Slack)
+2. Standardize list markers (- vs *)
+3. Clean tracking URLs: [Link](https://example.com?utm_source=tracker)
+
+> "Flexibility is key."
+
 \`\`\`javascript
-console.log("Convert HTML to MD easily");
+const simple = true;
 \`\`\`
-
-> "The best free online converter tool."
 `;
       default: // HTML inputs for both HTML_TO_MD and HTML_TO_TEXT
-        return `<h1>HTML to Markdown Converter</h1>
+        return `<h1>HTML to Markdown & Formatter</h1>
 <p>This is a <strong>sample</strong> HTML.</p>
 <h2>Features</h2>
 <ul>

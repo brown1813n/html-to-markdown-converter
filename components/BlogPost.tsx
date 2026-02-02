@@ -20,7 +20,7 @@ interface TocItem {
 export const BlogPost: React.FC<BlogPostProps> = ({ title, description, date, readTime, content, onBack }) => {
   // Handle SEO (Title and Description) on mount
   useEffect(() => {
-    document.title = `${title} | HTML to Markdown Converter`;
+    document.title = `${title} | Markdown Formatter & Converter`;
 
     // Try to find existing meta description
     let metaDescription = document.querySelector('meta[name="description"]');
@@ -130,15 +130,15 @@ export const BlogPost: React.FC<BlogPostProps> = ({ title, description, date, re
 
             {/* Header */}
             <header className="mb-12 border-b border-slate-800 pb-12">
-              <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-8 leading-tight tracking-tight">
+              <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-6 leading-tight">
                 {title}
               </h1>
               <div className="flex flex-wrap items-center gap-6 text-sm text-slate-400 font-medium">
-                <div className="flex items-center gap-2 bg-slate-900 px-4 py-1.5 rounded-full border border-slate-800">
+                <div className="flex items-center gap-2 bg-slate-900 px-3 py-1 rounded-full border border-slate-800">
                   <Calendar className="w-4 h-4" />
                   {date}
                 </div>
-                <div className="flex items-center gap-2 bg-slate-900 px-4 py-1.5 rounded-full border border-slate-800">
+                <div className="flex items-center gap-2 bg-slate-900 px-3 py-1 rounded-full border border-slate-800">
                   <Clock className="w-4 h-4" />
                   {readTime}
                 </div>
@@ -147,37 +147,7 @@ export const BlogPost: React.FC<BlogPostProps> = ({ title, description, date, re
 
             {/* Content */}
             <article 
-              className="prose prose-invert max-w-none 
-                prose-lg md:prose-xl
-                text-slate-300
-                
-                prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-100
-                
-                /* H2 Styling: Even larger size and spacing */
-                prose-h2:text-5xl md:prose-h2:text-6xl 
-                prose-h2:mt-32 prose-h2:mb-16 
-                prose-h2:text-blue-400
-                
-                /* H3 Styling: Larger and spaced out */
-                prose-h3:text-4xl md:prose-h3:text-5xl 
-                prose-h3:mt-24 prose-h3:mb-12 
-                prose-h3:text-blue-200
-                
-                /* Paragraphs: Very generous spacing (approx 4 line breaks) */
-                prose-p:leading-loose 
-                prose-p:mb-16 
-                text-lg md:text-xl
-                
-                prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
-                prose-strong:text-white prose-strong:font-semibold
-                
-                /* Lists with extra spacing */
-                prose-ul:my-16 prose-ul:space-y-6 prose-li:marker:text-blue-500
-                prose-ol:my-16 prose-ol:space-y-6
-                
-                /* Block spacing */
-                prose-pre:bg-slate-900 prose-pre:border prose-pre:border-slate-800 prose-pre:shadow-lg prose-pre:p-6 prose-pre:rounded-xl prose-pre:my-16
-                prose-code:text-blue-300 prose-code:bg-slate-900 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:before:content-none prose-code:after:content-none"
+              className="prose prose-invert max-w-none prose-lg text-slate-300 prose-headings:text-slate-100 prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-pre:bg-slate-900 prose-pre:border prose-pre:border-slate-800 prose-p:my-8 prose-headings:mt-16 prose-headings:mb-6 prose-li:my-2"
               dangerouslySetInnerHTML={{ __html: processedContent }}
             />
           </div>

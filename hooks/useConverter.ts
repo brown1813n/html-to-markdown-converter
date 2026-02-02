@@ -8,11 +8,12 @@ const DEFAULT_OPTIONS: ConversionOptions = {
     codeBlockStyle: 'fenced',
     emDelimiter: '_',
     strongDelimiter: '**',
-    linkStyle: 'inlined'
+    linkStyle: 'inlined',
+    flattenHeaders: false
 };
 
 export const useConverter = () => {
-  const [conversionType, setConversionType] = useState<ConversionType>('HTML_TO_MD');
+  const [conversionType, setConversionType] = useState<ConversionType>('MD_TO_MD');
   const [inputContent, setInputContent] = useState<string>('');
   const [outputContent, setOutputContent] = useState<string>('');
   const [cleanUrls, setCleanUrls] = useState<boolean>(true);
@@ -34,24 +35,67 @@ export const useConverter = () => {
     let newOptions = { ...options };
     switch (preset) {
         case 'gfm':
-            newOptions = { ...DEFAULT_OPTIONS, bulletListMarker: '-', codeBlockStyle: 'fenced' };
+            newOptions = { 
+                ...DEFAULT_OPTIONS, 
+                bulletListMarker: '-', 
+                codeBlockStyle: 'fenced',
+                headingStyle: 'atx'
+            };
             break;
         case 'slack':
             // Slack uses single * for bold, _ for italic. 
-            // It doesn't really support headers, but we keep atx for structure.
+            // It does not support headers (h1-h6), so we flatten them.
             newOptions = { 
                 ...DEFAULT_OPTIONS, 
                 strongDelimiter: '*', 
                 emDelimiter: '_',
-                bulletListMarker: '•' as any // Visual preference often used in slack pastes
+                bulletListMarker: '•' as any,
+                flattenHeaders: true
+            };
+            break;
+        case 'discord':
+            // Discord is close to GFM but often prefers underscores for italics to avoid ambiguity with *bold*
+            newOptions = {
+                ...DEFAULT_OPTIONS,
+                strongDelimiter: '**',
+                emDelimiter: '*',
+                bulletListMarker: '-',
+                headingStyle: 'atx'
+            };
+            break;
+        case 'reddit':
+            // Reddit is standard Markdown but superscript ^ is special (not handled here, but defaults are safe)
+            newOptions = {
+                ...DEFAULT_OPTIONS,
+                strongDelimiter: '**',
+                emDelimiter: '*',
+                headingStyle: 'atx'
             };
             break;
         case 'notion':
             // Notion prefers standard markdown but usually uses dashes
             newOptions = { ...DEFAULT_OPTIONS, bulletListMarker: '-', headingStyle: 'atx' };
             break;
+        case 'quip':
+            // Quip generally follows standard markdown, prefers ATX headers and dashed lists
+            newOptions = { 
+                ...DEFAULT_OPTIONS, 
+                headingStyle: 'atx', 
+                bulletListMarker: '-',
+                strongDelimiter: '**'
+            };
+            break;
+        case 'coda':
+            // Coda supports standard markdown well, prefers fenced code blocks
+            newOptions = { 
+                ...DEFAULT_OPTIONS, 
+                headingStyle: 'atx', 
+                bulletListMarker: '-', 
+                codeBlockStyle: 'fenced' 
+            };
+            break;
         default:
-            newOptions = DEFAULT_OPTIONS;
+            newOptions = { ...DEFAULT_OPTIONS, flattenHeaders: false };
     }
     // Only update if different to avoid loops (though check is shallow)
     if (JSON.stringify(newOptions) !== JSON.stringify(options)) {
@@ -123,8 +167,6 @@ export const useConverter = () => {
 
   const updateOption = (key: keyof ConversionOptions, value: any) => {
       setOptions(prev => ({ ...prev, [key]: value }));
-      // If user manually changes an option, technically they are drifting from the preset
-      // We could set preset to 'custom' if we wanted, but keeping 'default' is fine for now
   };
 
   return {

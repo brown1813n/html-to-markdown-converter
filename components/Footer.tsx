@@ -14,9 +14,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAbout, onOpenPrivacy, onOp
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-slate-200 font-semibold mb-3">HTML to Markdown Converter</h3>
+            <h3 className="text-slate-200 font-semibold mb-3">Markdown Formatter & Converter</h3>
             <p className="text-slate-500 text-sm leading-relaxed max-w-sm">
-              A free, privacy-focused tool to convert text between HTML, Markdown, and Plain Text formats. 
+              Automatically format your posts for cross-platform posting. A free, privacy-focused tool to standardize Markdown and convert HTML content.
               Running entirely in your browser for maximum security.
             </p>
           </div>
@@ -66,7 +66,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAbout, onOpenPrivacy, onOp
         </div>
         <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-600">
           <div>
-            &copy; {new Date().getFullYear()} HTML to Markdown Converter. All rights reserved.
+            &copy; {new Date().getFullYear()} Markdown Formatter & Converter. All rights reserved.
           </div>
         </div>
       </div>

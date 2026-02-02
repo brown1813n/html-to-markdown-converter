@@ -31,12 +31,74 @@ export const convertHtmlToMarkdown = (
   });
 
   // Apply GFM plugin for tables and strikethrough unless we are in a mode that strictly forbids it (like Slack)
+  // Slack actually supports strikethrough (~text~), so GFM is partially okay, but tables are bad in Slack.
+  // For simplicity, we enable GFM generally, but specific presets might not render tables well.
   if (gfm) {
       try {
           service.use(gfm);
       } catch (e) {
           console.warn("Failed to register GFM plugin:", e);
       }
+  }
+
+  // --- Manual Table Rules ---
+  // We add these rules to ensure robust table conversion. 
+  // If the GFM plugin loads successfully, its rules usually take precedence because they are added first.
+  // However, adding these ensures table support is available as a fallback or if GFM is disabled.
+
+  service.addRule('tableCell', {
+    filter: ['th', 'td'],
+    replacement: function (content, node) {
+      return cell(content, node);
+    }
+  });
+
+  service.addRule('tableRow', {
+    filter: 'tr',
+    replacement: function (content, node) {
+      var borderCells = '';
+      var alignMap: any = { left: ':---', right: '---:', center: ':---:' };
+
+      if (isHeadingRow(node)) {
+        for (var i = 0; i < node.childNodes.length; i++) {
+          var child = node.childNodes[i] as HTMLElement;
+          var border = '---';
+          var align = (child.getAttribute ? child.getAttribute('align') : '') || '';
+
+          if (align) border = alignMap[align.toLowerCase()] || border;
+
+          borderCells += cell(border, child);
+        }
+      }
+      return '\n' + content + (borderCells ? '\n' + borderCells : '');
+    }
+  });
+
+  service.addRule('table', {
+    filter: 'table',
+    replacement: function (content, node) {
+      return '\n\n' + content + '\n\n';
+    }
+  });
+
+  service.addRule('tableSection', {
+    filter: ['thead', 'tbody', 'tfoot'],
+    replacement: function (content) {
+      return content;
+    }
+  });
+  // --- End Manual Table Rules ---
+
+  // Custom Rule: Flatten Headers (e.g. for Slack)
+  if (options.flattenHeaders) {
+    service.addRule('flattenHeaders', {
+        filter: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+        replacement: function (content: string) {
+            const delimiter = options.strongDelimiter || '**';
+            // Emulate a header using bold text and double newline
+            return '\n' + delimiter + content + delimiter + '\n\n';
+        }
+    });
   }
 
   // Custom Rule: Clean Links
@@ -77,3 +139,23 @@ export const convertHtmlToMarkdown = (
       linksCleaned: linksCleanedCount 
   };
 };
+
+// --- Table Helper Functions ---
+function cell(content: string, node: any) {
+  var index = Array.prototype.indexOf.call(node.parentNode.childNodes, node);
+  var prefix = ' ';
+  if (index === 0) prefix = '| ';
+  return prefix + content + ' |';
+}
+
+function isHeadingRow(tr: any) {
+  var parentNode = tr.parentNode;
+  return (
+    parentNode.nodeName === 'THEAD' ||
+    (
+      parentNode.nodeName === 'TABLE' &&
+      Array.prototype.indexOf.call(parentNode.childNodes, tr) === 0 &&
+      tr.getElementsByTagName('th').length > 0
+    )
+  );
+}

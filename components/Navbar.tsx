@@ -34,7 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const ModeButton = ({ type, label }: { type: ConversionType; label: string }) => (
     <button 
         onClick={() => handleModeChange(type)}
-        className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+        className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
         conversionType === type 
             ? 'bg-blue-600 text-white shadow' 
             : 'text-slate-400 hover:text-slate-200'
@@ -52,13 +52,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               <FileCode className="w-5 h-5 text-white" />
             </div>
             <h1 className="hidden sm:block text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-              HTML to Markdown Converter
+              Markdown Formatter & Converter
             </h1>
           </div>
 
           {/* Desktop Nav Actions */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-4">
             <div className="flex items-center gap-1 bg-slate-800/50 p-1 rounded-lg border border-slate-700/50">
+                <ModeButton type="MD_TO_MD" label="MD → MD" />
                 <ModeButton type="HTML_TO_MD" label="HTML → MD" />
                 <ModeButton type="MD_TO_HTML" label="MD → HTML" />
                 <ModeButton type="HTML_TO_TEXT" label="HTML → Text" />
@@ -99,7 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
            {/* Mobile Menu Button */}
-           <div className="md:hidden">
+           <div className="lg:hidden">
               <button 
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
                 className="p-2 text-slate-400 hover:bg-slate-800 rounded-lg"
@@ -111,8 +112,14 @@ export const Navbar: React.FC<NavbarProps> = ({
         
         {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
-           <div className="md:hidden border-t border-slate-800 bg-slate-900 px-4 py-4 space-y-4 animate-in slide-in-from-top-2">
-              <div className="grid grid-cols-3 gap-2">
+           <div className="lg:hidden border-t border-slate-800 bg-slate-900 px-4 py-4 space-y-4 animate-in slide-in-from-top-2">
+              <div className="grid grid-cols-2 gap-2">
+                 <button 
+                   onClick={() => { handleModeChange('MD_TO_MD'); setMobileMenuOpen(false); }}
+                   className={`p-2 rounded text-xs font-medium text-center border ${conversionType === 'MD_TO_MD' ? 'bg-blue-600 border-blue-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-400'}`}
+                 >
+                   MD → MD
+                 </button>
                  <button 
                    onClick={() => { handleModeChange('HTML_TO_MD'); setMobileMenuOpen(false); }}
                    className={`p-2 rounded text-xs font-medium text-center border ${conversionType === 'HTML_TO_MD' ? 'bg-blue-600 border-blue-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-400'}`}

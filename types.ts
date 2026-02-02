@@ -3,7 +3,7 @@ export enum ConversionMode {
   CLEAN_URLS = 'CLEAN_URLS',
 }
 
-export type ConversionType = 'HTML_TO_MD' | 'MD_TO_HTML' | 'HTML_TO_TEXT';
+export type ConversionType = 'HTML_TO_MD' | 'MD_TO_HTML' | 'HTML_TO_TEXT' | 'MD_TO_MD';
 
 export type PageView = 
   | 'home' 
@@ -20,7 +20,7 @@ export interface ConverterStats {
   linksCleaned: number;
 }
 
-export type MarkdownPreset = 'default' | 'gfm' | 'slack' | 'notion';
+export type MarkdownPreset = 'default' | 'gfm' | 'slack' | 'notion' | 'discord' | 'reddit' | 'quip' | 'coda';
 
 export interface ConversionOptions {
   headingStyle: 'atx' | 'setext';
@@ -29,6 +29,7 @@ export interface ConversionOptions {
   emDelimiter: '_' | '*';
   strongDelimiter: '**' | '__' | '*';
   linkStyle: 'inlined' | 'referenced';
+  flattenHeaders?: boolean; // If true, headers are converted to bold text (useful for Slack)
 }
 
 export interface TurndownRule {

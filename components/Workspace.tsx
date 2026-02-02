@@ -39,13 +39,13 @@ export const Workspace: React.FC<WorkspaceProps> = ({
   updateOption
 }) => {
   const labels = getLabels(conversionType);
-  const isHtmlToMd = conversionType === 'HTML_TO_MD';
+  const showConfig = conversionType === 'HTML_TO_MD' || conversionType === 'MD_TO_MD';
 
   return (
     <div className="flex flex-col gap-4 relative flex-1">
         
-        {/* Settings Toolbar - Only visible for HTML -> MD */}
-        {isHtmlToMd && setPreset && updateOption && options && (
+        {/* Settings Toolbar - Visible for HTML -> MD and MD -> MD */}
+        {showConfig && setPreset && updateOption && options && (
             <div className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-wrap items-center gap-4 shadow-sm animate-in fade-in slide-in-from-top-2">
                 <div className="flex items-center gap-2 text-slate-400 text-sm font-medium border-r border-slate-800 pr-4">
                     <Settings2 className="w-4 h-4" />
@@ -54,7 +54,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                 
                 {/* Preset Selector */}
                 <div className="flex flex-col gap-1">
-                    <label className="text-[10px] uppercase text-slate-500 font-bold tracking-wider">Flavor</label>
+                    <label className="text-[10px] uppercase text-slate-500 font-bold tracking-wider">Format For</label>
                     <select 
                         value={preset} 
                         onChange={(e) => setPreset(e.target.value as MarkdownPreset)}
@@ -63,22 +63,28 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                         <option value="default">Default</option>
                         <option value="gfm">GitHub (GFM)</option>
                         <option value="slack">Slack</option>
+                        <option value="discord">Discord</option>
+                        <option value="reddit">Reddit</option>
                         <option value="notion">Notion</option>
+                        <option value="quip">Quip</option>
+                        <option value="coda">Coda</option>
                     </select>
                 </div>
 
-                {/* Heading Style */}
-                <div className="flex flex-col gap-1">
-                    <label className="text-[10px] uppercase text-slate-500 font-bold tracking-wider">Heading</label>
-                    <select 
-                        value={options.headingStyle} 
-                        onChange={(e) => updateOption('headingStyle', e.target.value)}
-                        className="bg-slate-800 border-none text-slate-200 text-xs rounded px-2 py-1.5 focus:ring-1 focus:ring-blue-500 cursor-pointer hover:bg-slate-700 transition-colors"
-                    >
-                        <option value="atx"># ATX</option>
-                        <option value="setext">Underline</option>
-                    </select>
-                </div>
+                {/* Heading Style - Hide if flattened (Slack) */}
+                {!options.flattenHeaders && (
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] uppercase text-slate-500 font-bold tracking-wider">Heading</label>
+                        <select 
+                            value={options.headingStyle} 
+                            onChange={(e) => updateOption('headingStyle', e.target.value)}
+                            className="bg-slate-800 border-none text-slate-200 text-xs rounded px-2 py-1.5 focus:ring-1 focus:ring-blue-500 cursor-pointer hover:bg-slate-700 transition-colors"
+                        >
+                            <option value="atx"># ATX</option>
+                            <option value="setext">Underline</option>
+                        </select>
+                    </div>
+                )}
 
                 {/* Bullet Style */}
                 <div className="flex flex-col gap-1">
@@ -91,6 +97,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                         <option value="-">- Dash</option>
                         <option value="*">* Asterisk</option>
                         <option value="+">+ Plus</option>
+                        <option value="•">• Bullet</option>
                     </select>
                 </div>
 

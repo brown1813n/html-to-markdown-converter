@@ -13,8 +13,8 @@ import { AdBanner } from './components/AdBanner';
 type ModalType = 'about' | 'privacy' | 'contact' | null;
 
 const APP_METADATA = {
-  name: "HTML to Markdown Converter",
-  description: "Free online tool to convert HTML to Markdown, Markdown to HTML, and HTML to Plain Text. Automatically cleans URLs and removes tracking parameters."
+  name: "Markdown Formatter & Converter",
+  description: "Automatically format your posts for cross-platform posting. The ultimate tool to standardize Markdown, convert HTML, and clean URLs."
 };
 
 const App: React.FC = () => {
@@ -29,7 +29,7 @@ const App: React.FC = () => {
   // SEO Management
   useEffect(() => {
     if (currentView === 'home') {
-      document.title = `${APP_METADATA.name} - Free Online Tool`;
+      document.title = `${APP_METADATA.name} - Cross-Platform Post Optimizer`;
       let metaDescription = document.querySelector('meta[name="description"]');
       if (!metaDescription) {
         metaDescription = document.createElement('meta');
